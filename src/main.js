@@ -2,7 +2,6 @@ import iziToast from 'izitoast';
 import "izitoast/dist/css/iziToast.min.css";
 import Swiper from 'swiper/bundle';
 import 'swiper/css/bundle';
-import axios from "axios";
 
 const feedBackBtn = document.querySelector('.feedback-btn');
 const backdrop = document.querySelector('.backdrop');
@@ -11,7 +10,7 @@ const burger = document.querySelector('.menu-btn');
 const menu = document.querySelector('.modal-menu');
 const closeMenu = document.querySelector('.menu-close-btn');
 const form = document.querySelector('.review-form');
-const URL = "http://localhost:3001/reviews";
+const reviews = [];
 
 feedBackBtn.addEventListener('click', () => backdrop.classList.add('is-open'));
 closeBtn.addEventListener('click', () => backdrop.classList.remove('is-open'));
@@ -26,14 +25,9 @@ menu.addEventListener('click', evt => {
     }
 });
 
-async function serviceTodos(url = URL, options = {}) {
-    const response = await axios(url, options);
-    return response.data;
-}
-
 form.addEventListener('submit', postForm);
     
-    async function postForm(evt) {
+    function postForm(evt) {
     evt.preventDefault();
     const { userName, userEmail, userTel, userComent, checkbox } = evt.target.elements;
     if (!userName.value || !userEmail.value || !userTel.value || !userComent.value || !checkbox.checked) {
@@ -50,31 +44,15 @@ form.addEventListener('submit', postForm);
         });
     }
     backdrop.classList.remove('is-open');
-    try {
-        const data = await serviceTodos(URL, {
-            method: "POST",
-            data: {
-                userName: userName.value.trim(),
-        userEmail: userEmail.value.trim(),
-        userTel: userTel.value.trim(),
-        userComent: userComent.value.trim(),
-            }
+        reviews.push({
+            userName: userName.value.trim(),
+            userEmail: userEmail.value.trim(),
+            userTel: userTel.value.trim(),
+            userComent: userComent.value.trim(),
         });
-    } catch (error) {
-        return iziToast.error({
-            backgroundColor: 'red',
-            theme: 'dark',
-            overlay: false,
-            position: 'topRight',
-            title: 'Error',
-            titleColor: 'white',
-            message: error.message,
-            messageColor: 'white',
-            overlayColor: 'rgba(0, 0, 0, 0.6)',
-        });
-    } finally {
+        console.log(reviews);
         form.reset(); 
-    }};
+    };
 
 const swiper = new Swiper('.swiper', {
   direction: 'horizontal',
